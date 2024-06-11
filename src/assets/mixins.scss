@@ -1,0 +1,6 @@
+@mixin scrollbar {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  @content;
+}

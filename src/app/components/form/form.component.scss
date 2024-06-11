@@ -1,0 +1,42 @@
+@import '../../../assets/variables';
+@import '../../../assets/mixins';
+
+form {
+  height: 100%;
+  width: 100%;
+  .title {
+    font-size: $font-size-medium;
+    padding-bottom: $padding;
+  }
+  .control {
+    .label {
+      font-weight: $font-weight-bold;
+      padding: $padding / 2 0;
+    }
+    input {
+      width: 100%;
+      padding: 12px $padding;
+      border: 1px solid var(--border-color);
+      border-radius: $border-radius;
+      box-sizing: border-box;
+      height: $field-height;
+    }
+    input:focus {
+      outline: none;
+    }
+    input:focus {
+      border: 1px solid var(--primary-color);
+    }
+  }
+  button {
+    width: 100%;
+    border-radius: $border-radius;
+    height: $field-height;
+    background-color: var(--button-color);
+    color: var(--contrast-color);
+    margin-top: $padding;
+  }
+  button:focus:not(:focus-visible) {
+    outline: none;
+  }
+}

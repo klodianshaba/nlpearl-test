@@ -1,0 +1,28 @@
+@import '../../../assets/variables';
+@import '../../../assets/mixins';
+
+.sentence {
+  border: 1px solid var(--border-color);
+  border-radius: $border-radius;
+  .editable {
+    @include scrollbar;
+    min-height: 50px;
+    max-height: 300px;
+    border-radius: $border-radius $border-radius 0 0;
+    padding: $padding;
+    outline: none;
+    .placeholder {
+      padding: 1.5px;
+      border-radius: 4px;
+      font-size: $font-size-small;
+      background-color: var(--primary-color);
+      color: var(--contrast-color);
+    }
+    p {
+      margin: 0;
+    }
+  }
+}
+.sentence:has(> .editable:focus) {
+  border: 1px solid var(--primary-color);
+}

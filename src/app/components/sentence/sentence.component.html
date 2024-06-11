@@ -1,0 +1,17 @@
+<div class="sentence">
+  <div
+    #editable
+    contenteditable="true"
+    class="editable"
+    (input)="onInput($event)">
+    <p>
+      <span>
+        <span contenteditable="false" class="placeholder">Company Name</span>
+      </span>
+    </p>
+  </div>
+  <app-placeholders
+    [placeholders]="placeholders()"
+    (onPlaceholder)="onPlaceholder($event)">
+  </app-placeholders>
+</div>

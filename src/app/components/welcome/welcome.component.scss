@@ -1,0 +1,12 @@
+@import '../../../assets/variables';
+.welcome {
+  height: 100%;
+  width: 100%;
+  font-size: $font-size-large;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
+  border-radius: 20px;
+  > div {
+    padding: $padding * 2;
+  }
+}

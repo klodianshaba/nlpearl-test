@@ -1,0 +1,7 @@
+<div class="placeholders">
+  @for (placeholder of placeholders(); track placeholder) {
+    <div class="placeholder" (click)="onPlaceholder.emit(placeholder)">
+      {{ placeholder }}
+    </div>
+  }
+</div>

@@ -1,0 +1,37 @@
+@import '../../../assets/variables';
+@import '../../../assets/mixins';
+
+.container {
+  @include scrollbar;
+  height: calc(100vh - 40px);
+  padding: $padding;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  gap: $padding * 2;
+  // form
+  app-form {
+    width: 393px;
+    max-width: 100%;
+  }
+  // welcome
+  app-welcome {
+    height: 593px;
+    width: 515px;
+    max-width: 100%;
+  }
+}
+
+// breakpoints
+@media only screen and (max-width: 1000px) {
+  .container {
+    flex-direction: column;
+    justify-content: start;
+  }
+}
+@media only screen and (max-height: 630px) and (min-width: 1000px) {
+  .container {
+    align-items: baseline;
+  }
+}
