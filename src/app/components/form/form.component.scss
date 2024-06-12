@@ -30,13 +30,18 @@ form {
   }
   button {
     width: 100%;
+    border: none;
     border-radius: $border-radius;
     height: $field-height;
     background-color: var(--button-color);
     color: var(--contrast-color);
     margin-top: $padding;
+    cursor: pointer;
   }
   button:focus:not(:focus-visible) {
     outline: none;
+  }
+  button:hover {
+    box-shadow: $box-shadow;
   }
 }
