@@ -1,4 +1,4 @@
-<form>
+<form [formGroup]="formGroup">
   <div class="title">
     <span>Test Page</span>
   </div>
@@ -6,19 +6,20 @@
     <div class="label">
       <span>Name</span>
     </div>
-    <input type="text" />
+    <input type="text" formControlName="name" />
   </div>
   <div class="control">
     <div class="label">
       <span>Phone</span>
     </div>
-    <input type="text" />
+    <input type="text" formControlName="phone" />
   </div>
   <div class="control">
     <div class="label">
       <span>Opening Sentence</span>
     </div>
-    <app-sentence [placeholders]="placeholders"></app-sentence>
+    <app-sentence formControlName="sentence" [placeholders]="placeholders">
+    </app-sentence>
   </div>
-  <button type="submit">Submit</button>
+  <button type="submit" (click)="submit()">Submit</button>
 </form>
