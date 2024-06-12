@@ -7,8 +7,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PlaceholdersComponent } from '../placeholders/placeholders.component';
+import { EditorService } from '../../services/editor.service';
 
 @Component({
   selector: 'app-sentence',
@@ -24,40 +25,51 @@ import { PlaceholdersComponent } from '../placeholders/placeholders.component';
     },
   ],
 })
-export class SentenceComponent {
+export class SentenceComponent implements ControlValueAccessor {
   placeholders = input<string[]>([]);
   editable = viewChild<ElementRef>('editable');
   html: SafeHtml = '';
-  onChange: (value: string) => void = () => {};
+  private onChange: (value: string) => void = () => {};
+  private savedRange: Range | null = null;
+
   constructor(
     private domSanitizer: DomSanitizer,
-    private renderer: Renderer2
-  ) {}
+    private renderer: Renderer2,
+    private editorService: EditorService
+  ) {
+    this.editorService.renderer = this.renderer;
+  }
 
   writeValue(value: string) {
-    this.html = this.domSanitizer.bypassSecurityTrustHtml(value);
+    this.html = this.domSanitizer.bypassSecurityTrustHtml(
+      this.editorService.convertToHtml(value, this.placeholders())
+    );
   }
+
   registerOnChange(fn: any) {
     this.onChange = fn;
   }
+
   registerOnTouched(fn: any) {}
 
   onInput(event: Event) {
-    const text = this.editable()?.nativeElement.textContent;
-    this.onChange(text);
-    console.log(event);
+    this.updateSentence();
   }
-  onPlaceholder(placeholder: string) {
-    console.log(placeholder);
-    const k = '&#xFEFE;';
-    const placeholderElement = this.renderer.createElement('span');
-    placeholderElement.innerText = placeholder;
-    placeholderElement.classList.add('placeholder');
-    placeholderElement.setAttribute('contenteditable', false);
 
-    this.renderer.appendChild(
-      this.editable()?.nativeElement,
-      placeholderElement
-    );
+  onPlaceholder(placeholder: string) {
+    this.editorService.insertAtCursor(this.savedRange, placeholder);
+    this.updateSentence();
+  }
+
+  saveSelection() {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      this.savedRange = selection.getRangeAt(0);
+    }
+  }
+
+  private updateSentence() {
+    const formatedText = this.editorService.convertToText(this.editable());
+    this.onChange(formatedText);
   }
 }

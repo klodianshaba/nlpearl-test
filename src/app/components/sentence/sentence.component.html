@@ -3,6 +3,10 @@
     #editable
     contenteditable="true"
     class="editable"
+    [innerHTML]="html"
+    (focus)="saveSelection()"
+    (keyup)="saveSelection()"
+    (mouseup)="saveSelection()"
     (input)="onInput($event)">
     <p>
       <span>
