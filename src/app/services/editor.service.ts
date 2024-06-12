@@ -12,6 +12,7 @@ export class EditorService {
   openDelimiter = '[';
   closeDelimiter = ']';
   renderer: Renderer2;
+
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -84,5 +85,21 @@ export class EditorService {
           this.openDelimiter + element.innerText + this.closeDelimiter;
       }
     });
+  }
+
+  insertAtCursor(savedRange: Range | null, placeholder: string) {
+    const selection = window.getSelection();
+    if (savedRange && selection) {
+      selection.removeAllRanges();
+      selection.addRange(savedRange);
+      const range = savedRange;
+      const placeholderElement = this.createPlaceholderElement(placeholder);
+      range.insertNode(placeholderElement);
+      range.setStartAfter(placeholderElement);
+      range.setEndAfter(placeholderElement);
+      savedRange = range;
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 }
