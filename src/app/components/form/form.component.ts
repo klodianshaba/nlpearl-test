@@ -26,15 +26,20 @@ export class FormComponent {
     'First Name',
     'Last Name',
   ];
-  initialSentence =
-    'Hi, this is [Agent Name], I am  calling from [Company Name] , do you have a few minutes for to answer some questions?';
+  initialFormData: FormDataModel = {
+    name: 'Klodian Shaba',
+    phone: '+355683834233',
+    sentence:
+      "Hi, this is [Agent Name], I'm calling from [Company Name] , do you have a few minutes for to answer some questions?",
+  };
 
   constructor(private formBuilder: FormBuilder) {
     this.formGroup = this.formBuilder.group<FormGroupModel>({
       name: new FormControl('', Validators.required),
       phone: new FormControl('', Validators.required),
-      sentence: new FormControl(this.initialSentence, Validators.required),
+      sentence: new FormControl('', Validators.required),
     });
+    this.formGroup.patchValue(this.initialFormData);
   }
   /**
    * @description Submitting form button handler
