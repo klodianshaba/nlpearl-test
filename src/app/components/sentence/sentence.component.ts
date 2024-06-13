@@ -71,7 +71,11 @@ export class SentenceComponent implements ControlValueAccessor {
     if (this.savedRange) {
       this.editorService.insertAtCursor(this.savedRange, placeholder);
       this.updateSentence();
-    }
+    } else
+      this.editorService.insertAtBottom(
+        this.editable()?.nativeElement,
+        placeholder
+      );
   }
 
   private updateSentence() {

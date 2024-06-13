@@ -97,6 +97,21 @@ export class EditorService {
     }
   }
 
+  insertAtBottom(
+    editableElement: HTMLElement | undefined,
+    placeholder: string
+  ) {
+    const element = editableElement?.lastChild?.lastChild;
+    if (element) {
+      const placeholderElement = this.createPlaceholderElement(placeholder);
+      element.after(placeholderElement);
+      this.setCursorAt(
+        placeholderElement.firstChild,
+        placeholderElement.innerText.length
+      );
+    }
+  }
+
   setCursorAt(child: Node | null, index: number) {
     const selection = window.getSelection();
     const range = document.createRange();
