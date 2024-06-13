@@ -7,6 +7,12 @@
   @content;
 }
 
+@mixin field-focus() {
+  outline: none;
+  border: 1px solid var(--primary-color);
+  @content;
+}
+
 @mixin sm-breakpoint {
   @media only screen and (max-width: map-get($breakpoints, 'sm')) {
     @content;

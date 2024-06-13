@@ -26,5 +26,5 @@
   }
 }
 .sentence:has(> .editable:focus) {
-  border: 1px solid var(--primary-color);
+  @include field-focus;
 }
