@@ -6,4 +6,5 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/test/test.component').then(m => m.TestComponent),
   },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

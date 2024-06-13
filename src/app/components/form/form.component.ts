@@ -18,7 +18,7 @@ import { FormDataModel } from '../../models/form-data-model';
   styleUrl: './form.component.scss',
 })
 export class FormComponent {
-  onSubmit = output<FormDataModel>();
+  onSubmitted = output<FormDataModel>();
   formGroup: FormGroup<FormGroupModel>;
   placeholders: string[] = [
     'Company Name',
@@ -36,13 +36,15 @@ export class FormComponent {
       sentence: new FormControl(this.initialSentence, Validators.required),
     });
   }
-
-  submit() {
+  /**
+   * @description Submitting form button handler
+   * **/
+  onSubmit() {
     const formData: FormDataModel = {
       name: this.formGroup.value.name ?? null,
       phone: this.formGroup.value.phone ?? null,
       sentence: this.formGroup.value.sentence ?? null,
     };
-    this.onSubmit.emit(formData);
+    this.onSubmitted.emit(formData);
   }
 }

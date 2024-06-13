@@ -12,7 +12,10 @@ import { FormDataModel } from '../../models/form-data-model';
   styleUrl: './test.component.scss',
 })
 export class TestComponent {
-  onSubmit(formData: FormDataModel) {
+  /**
+   * @description Submitted form data
+   * **/
+  onSubmitted(formData: FormDataModel) {
     // submitted data
   }
 }

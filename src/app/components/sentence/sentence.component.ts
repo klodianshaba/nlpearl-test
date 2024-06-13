@@ -40,21 +40,29 @@ export class SentenceComponent implements ControlValueAccessor {
   ) {
     this.editorService.renderer = this.renderer;
   }
-
+  /**
+   * @description Implementing write value from control value accessor
+   * **/
   writeValue(value: string) {
     this.html = this.domSanitizer.bypassSecurityTrustHtml(
       this.editorService.convertToHtml(value, this.placeholders())
     );
   }
-
+  /**
+   * @description Implementing register on change from control value accessor
+   * **/
   registerOnChange(fn: (value: string) => void) {
     this.onChange = fn;
   }
-
+  /**
+   * @description Implementing register on touched from control value accessor
+   * **/
   registerOnTouched(fn: (value: string) => void) {
     this.onTouched = fn;
   }
-
+  /**
+   * @description Contenteditable input event handler
+   * **/
   onInput() {
     this.editorService.handleInput(
       this.editable()?.nativeElement,
@@ -62,7 +70,9 @@ export class SentenceComponent implements ControlValueAccessor {
     );
     this.updateSentence();
   }
-
+  /**
+   * @description Contenteditable keydown event handler
+   * **/
   onKeydown(event: KeyboardEvent) {
     switch (event.code) {
       case 'Space':
@@ -78,11 +88,15 @@ export class SentenceComponent implements ControlValueAccessor {
         break;
     }
   }
-
+  /**
+   * @description Selection called on focus, keyup, mouseup events to save the selected range and be able to insert placeholders from outside
+   * **/
   onSelection() {
     this.savedRange = this.editorService.getSelectionRange();
   }
-
+  /**
+   * @description Suggested placeholder handler, inserting into editor
+   * **/
   onPlaceholder(placeholder: string) {
     if (this.savedRange) {
       this.editorService.insertPlaceholderAtCursor(
@@ -96,7 +110,9 @@ export class SentenceComponent implements ControlValueAccessor {
         placeholder
       );
   }
-
+  /**
+   * @description Updating control value
+   * **/
   private updateSentence() {
     this.onChange(this.editorService.convertToText(this.editable()));
   }
