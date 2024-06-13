@@ -11,7 +11,7 @@ form {
   .control {
     .label {
       font-weight: $font-weight-bold;
-      padding: $padding / 2 0;
+      padding: calc($padding / 2) 0;
     }
     input {
       width: 100%;

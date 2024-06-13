@@ -7,6 +7,6 @@
   color: var(--contrast-color);
   border-radius: 20px;
   > div {
-    padding: $padding * 2;
+    padding: calc($padding * 2);
   }
 }
