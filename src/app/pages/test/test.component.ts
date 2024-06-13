@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SentenceComponent } from '../../components/sentence/sentence.component';
 import { FormComponent } from '../../components/form/form.component';
 import { WelcomeComponent } from '../../components/welcome/welcome.component';
+import { FormDataModel } from '../../models/form-data-model';
 
 @Component({
   selector: 'app-test',
@@ -10,4 +11,8 @@ import { WelcomeComponent } from '../../components/welcome/welcome.component';
   templateUrl: './test.component.html',
   styleUrl: './test.component.scss',
 })
-export class TestComponent {}
+export class TestComponent {
+  onSubmit(formData: FormDataModel) {
+    // submitted data
+  }
+}

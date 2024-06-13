@@ -9,7 +9,7 @@
   flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
-  gap: $padding * 2;
+  gap: calc($padding * 4);
   // form
   app-form {
     width: 393px;
@@ -28,6 +28,7 @@
   .container {
     flex-direction: column;
     justify-content: start;
+    gap: calc($padding * 2);
   }
 }
 @media only screen and (max-height: 630px) and (min-width: 1000px) {
