@@ -1,6 +1,38 @@
+@import './variables';
+
 @mixin scrollbar {
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
   @content;
+}
+
+@mixin sm-breakpoint {
+  @media only screen and (max-width: map-get($breakpoints, 'sm')) {
+    @content;
+  }
+}
+
+@mixin md-breakpoint {
+  @media only screen and (max-width: map-get($breakpoints, 'md')) {
+    @content;
+  }
+}
+
+@mixin lg-breakpoint {
+  @media only screen and (max-width: map-get($breakpoints, 'lg')) {
+    @content;
+  }
+}
+
+@mixin xl-breakpoint {
+  @media only screen and (max-width: map-get($breakpoints, 'xl')) {
+    @content;
+  }
+}
+
+@mixin lg-and-sm-height-breakpoint {
+  @media only screen and (max-height: map-get($breakpoints, 'sm')) and (min-width: map-get($breakpoints, 'lg')) {
+    @content;
+  }
 }

@@ -24,14 +24,15 @@
 }
 
 // breakpoints
-@media only screen and (max-width: 1000px) {
+@include lg-breakpoint {
   .container {
     flex-direction: column;
     justify-content: start;
     gap: calc($padding * 2);
   }
 }
-@media only screen and (max-height: 630px) and (min-width: 1000px) {
+
+@include lg-and-sm-height-breakpoint {
   .container {
     align-items: baseline;
   }
