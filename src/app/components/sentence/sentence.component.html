@@ -6,8 +6,9 @@
     [innerHTML]="html"
     (focus)="onSelection()"
     (keyup)="onSelection()"
+    (keydown)="onKeydown($event)"
     (mouseup)="onSelection()"
-    (input)="onInput($event)">
+    (input)="onInput()">
     <p></p>
   </div>
   <app-placeholders

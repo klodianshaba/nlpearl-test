@@ -55,12 +55,22 @@ export class SentenceComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  onInput(event: Event) {
-    this.editorService.handleInteraction(
+  onInput() {
+    this.editorService.handleInput(
       this.editable()?.nativeElement,
       this.placeholders()
     );
     this.updateSentence();
+  }
+
+  onKeydown(event: KeyboardEvent) {
+    switch (event.code) {
+      case 'Space':
+        this.editorService.handleSpace();
+        break;
+      default:
+        break;
+    }
   }
 
   onSelection() {

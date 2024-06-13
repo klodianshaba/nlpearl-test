@@ -19,7 +19,7 @@ export class EditorService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  handleInteraction(
+  handleInput(
     editableElement: HTMLElement | undefined,
     placeholders: string[]
   ) {
@@ -27,13 +27,37 @@ export class EditorService {
     const range = this.getSelectionRange();
     if (range) {
       const container = range.startContainer;
-      const element = this.getInteractionElement(container);
+      const element = this.getInputElement(container);
       this.checkContainer(editableElement, container);
 
       if (element.nodeType == Node.ELEMENT_NODE) {
-        this.handlePlaceholderInteraction(element);
+        this.handlePlaceholder(element);
       } else if (element.nodeType == Node.TEXT_NODE) {
-        this.handleTextInteraction(element);
+        this.handleText(element);
+      }
+    }
+  }
+
+  handleSpace() {
+    const range = this.getSelectionRange();
+    if (range) {
+      const container = range.startContainer;
+      const element = this.getInputElement(container);
+      if (element.nodeType == Node.ELEMENT_NODE) {
+        if (element?.hasAttribute('placeholder')) {
+          // placeholder element
+          const cursorIndex = this.getCursorIndex(element);
+          if (cursorIndex == element.innerText.trim().length) {
+            // last character of placeholder
+            const textElement = this.createTextElement(
+              this.zeroWidthNonBreakingSpace + ' '
+            );
+            element.after(textElement);
+            this.setCursorAt(textElement, 1);
+          } else if (cursorIndex == 0) {
+            // first character of placeholder
+          }
+        }
       }
     }
   }
@@ -84,17 +108,32 @@ export class EditorService {
   insertAtCursor(savedRange: Range | undefined, placeholder: string) {
     const selection = window.getSelection();
     if (savedRange && selection) {
-      selection.removeAllRanges();
-      selection.addRange(savedRange);
-      const range = savedRange;
-      const placeholderElement = this.createPlaceholderElement(placeholder);
-      range.insertNode(placeholderElement);
-      range.setStartAfter(placeholderElement);
-      range.setEndAfter(placeholderElement);
-      savedRange = range;
-      selection.removeAllRanges();
-      selection.addRange(range);
+      if (this.canInsertPlaceholder(savedRange)) {
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+        const range = savedRange;
+        const placeholderElement = this.createPlaceholderElement(placeholder);
+        range.insertNode(placeholderElement);
+        range.setStartAfter(placeholderElement);
+        range.setEndAfter(placeholderElement);
+        savedRange = range;
+        selection.removeAllRanges();
+        selection.addRange(range);
+        this.setCursorAt(
+          placeholderElement.firstChild,
+          placeholderElement.innerText.length
+        );
+      }
     }
+  }
+
+  canInsertPlaceholder(savedRange: Range) {
+    const container = savedRange.startContainer;
+    const element = this.getInputElement(container);
+    if (element.nodeType == Node.ELEMENT_NODE) {
+      return !element.hasAttribute('placeholder');
+    }
+    return true;
   }
 
   insertAtBottom(
@@ -142,7 +181,7 @@ export class EditorService {
     return undefined;
   }
 
-  private handlePlaceholderInteraction(element: HTMLElement) {
+  private handlePlaceholder(element: HTMLElement) {
     const text = element.textContent ?? '';
     const parentElement = element.parentElement ?? element;
     const leftSiblingElement = this.getLeftSiblingElement(element);
@@ -175,7 +214,7 @@ export class EditorService {
     }
   }
 
-  private handleTextInteraction(element: HTMLElement) {
+  private handleText(element: HTMLElement) {
     const text = element.textContent ?? '';
     const parentElement = element.parentElement ?? element;
     const placeholder = this.getIncludedPlaceholder(text);
@@ -248,7 +287,7 @@ export class EditorService {
     return text.match(regex);
   }
 
-  private getInteractionElement(container: Node) {
+  private getInputElement(container: Node) {
     return (
       container.parentElement instanceof HTMLParagraphElement
         ? container
