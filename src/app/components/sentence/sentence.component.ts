@@ -75,11 +75,12 @@ export class SentenceComponent implements ControlValueAccessor {
    * **/
   onKeydown(event: KeyboardEvent) {
     const key = event.which || event.keyCode;
+    console.log(event);
     switch (key) {
       case 32:
         this.editorService.handleSpace();
         break;
-      case 13:
+      case 13 | 10:
         this.editorService.handleEnter();
         break;
       case 8:
