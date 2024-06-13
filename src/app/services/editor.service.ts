@@ -24,42 +24,69 @@ export class EditorService {
     placeholders: string[]
   ) {
     this.placeholders = placeholders;
-    const range = this.getSelectionRange();
-    if (range) {
-      const container = range.startContainer;
-      const element = this.getInputElement(container);
-      this.checkContainer(editableElement, container);
+    this.checkContainer(editableElement);
+    if (this.isPlaceholderElement()) this.handlePlaceholder();
+    else if (this.isTextElement()) this.handleText();
+  }
 
-      if (element.nodeType == Node.ELEMENT_NODE) {
-        this.handlePlaceholder(element);
-      } else if (element.nodeType == Node.TEXT_NODE) {
-        this.handleText(element);
+  handleSpace() {
+    const element = this.isPlaceholderElement();
+    if (element) {
+      // placeholder element
+      const cursorIndex = this.getCursorIndex(element);
+      if (cursorIndex == element.innerText.trim().length) {
+        // last character of placeholder
+        const textElement = this.createTextElement(
+          this.zeroWidthNonBreakingSpace + ' '
+        );
+        element.after(textElement);
+        this.setCursorAt(textElement, 1);
       }
     }
   }
 
-  handleSpace() {
-    const range = this.getSelectionRange();
-    if (range) {
-      const container = range.startContainer;
-      const element = this.getInputElement(container);
-      if (element.nodeType == Node.ELEMENT_NODE) {
-        if (element?.hasAttribute('placeholder')) {
-          // placeholder element
-          const cursorIndex = this.getCursorIndex(element);
-          if (cursorIndex == element.innerText.trim().length) {
-            // last character of placeholder
-            const textElement = this.createTextElement(
-              this.zeroWidthNonBreakingSpace + ' '
-            );
-            element.after(textElement);
-            this.setCursorAt(textElement, 1);
-          } else if (cursorIndex == 0) {
-            // first character of placeholder
-          }
-        }
+  handleEnter() {
+    const element = this.isPlaceholderElement();
+    if (element) {
+      const cursorIndex = this.getCursorIndex(element);
+      if (cursorIndex == 0) {
+        // first character of placeholder
+        const textElement = this.createTextElement(
+          this.zeroWidthNonBreakingSpace + ' '
+        );
+        element.before(textElement);
+        this.setCursorAt(textElement, 1);
       }
     }
+  }
+
+  isPlaceholderElement() {
+    let result: HTMLElement | undefined;
+    const element = this.getSelectionRangeElement();
+    if (element) {
+      if (element.nodeType == Node.ELEMENT_NODE) {
+        if (element?.hasAttribute('placeholder')) result = element;
+      }
+    }
+    return result;
+  }
+
+  isTextElement() {
+    let result: HTMLElement | undefined;
+    const element = this.getSelectionRangeElement();
+    if (element) {
+      if (element.nodeType == Node.TEXT_NODE) result = element;
+    }
+    return result;
+  }
+
+  canInsertPlaceholder(savedRange: Range) {
+    const container = savedRange.startContainer;
+    const element = this.getInputElement(container);
+    if (element.nodeType == Node.ELEMENT_NODE) {
+      return !element.hasAttribute('placeholder');
+    }
+    return true;
   }
 
   convertToHtml(value: string, acceptedPlaceholders: string[]): string {
@@ -127,15 +154,6 @@ export class EditorService {
     }
   }
 
-  canInsertPlaceholder(savedRange: Range) {
-    const container = savedRange.startContainer;
-    const element = this.getInputElement(container);
-    if (element.nodeType == Node.ELEMENT_NODE) {
-      return !element.hasAttribute('placeholder');
-    }
-    return true;
-  }
-
   insertAtBottom(
     editableElement: HTMLElement | undefined,
     placeholder: string
@@ -181,14 +199,34 @@ export class EditorService {
     return undefined;
   }
 
-  private handlePlaceholder(element: HTMLElement) {
-    const text = element.textContent ?? '';
-    const parentElement = element.parentElement ?? element;
-    const leftSiblingElement = this.getLeftSiblingElement(element);
-    const rightSiblingElement = this.getRightSiblingElement(element);
-    const placeholder = this.getMatchingPlaceholder(text);
-    if (element?.hasAttribute('placeholder')) {
+  getSelectionRangeElement() {
+    let element: HTMLElement | undefined;
+    const range = this.getSelectionRange();
+    if (range) {
+      const container = range.startContainer;
+      element = this.getInputElement(container);
+    }
+    return element;
+  }
+
+  private getInputElement(container: Node) {
+    return (
+      container.parentElement instanceof HTMLParagraphElement
+        ? container
+        : container.parentElement
+    ) as HTMLElement;
+  }
+
+  private handlePlaceholder() {
+    const element = this.getSelectionRangeElement();
+    if (element) {
+      const text = element.textContent ?? '';
+      const placeholder = this.getMatchingPlaceholder(text);
+
       if (!placeholder) {
+        const parentElement = element.parentElement ?? element;
+        const leftSiblingElement = this.getLeftSiblingElement(element);
+        const rightSiblingElement = this.getRightSiblingElement(element);
         const cursorIndex = this.getCursorIndex(element);
         if (
           leftSiblingElement &&
@@ -214,34 +252,38 @@ export class EditorService {
     }
   }
 
-  private handleText(element: HTMLElement) {
-    const text = element.textContent ?? '';
-    const parentElement = element.parentElement ?? element;
-    const placeholder = this.getIncludedPlaceholder(text);
-    if (placeholder) {
-      // placeholder included
-      const parts = this.splitPlaceholder(text, placeholder);
-      parts?.forEach(part => {
-        if (part.includes(placeholder)) {
-          // placeholder
-          const placeholderElement = this.createPlaceholderElement(part);
-          parentElement.insertBefore(placeholderElement, element);
-          this.setCursorAt(
-            placeholderElement.firstChild,
-            placeholderElement.innerText.length
-          );
-        } else {
-          // text
-          const textElement = this.createTextElement(part);
-          parentElement.insertBefore(textElement, element);
-        }
-      });
-      parentElement.removeChild(element);
+  private handleText() {
+    const element = this.getSelectionRangeElement();
+    if (element) {
+      const text = element.textContent ?? '';
+      const placeholder = this.getIncludedPlaceholder(text);
+      if (placeholder) {
+        // placeholder included
+        const parentElement = element.parentElement ?? element;
+        const parts = this.splitPlaceholder(text, placeholder);
+        parts?.forEach(part => {
+          if (part.includes(placeholder)) {
+            // placeholder
+            const placeholderElement = this.createPlaceholderElement(part);
+            parentElement.insertBefore(placeholderElement, element);
+            this.setCursorAt(
+              placeholderElement.firstChild,
+              placeholderElement.innerText.length
+            );
+          } else {
+            // text
+            const textElement = this.createTextElement(part);
+            parentElement.insertBefore(textElement, element);
+          }
+        });
+        parentElement.removeChild(element);
+      }
     }
   }
 
-  private checkContainer(element: HTMLElement | undefined, container: Node) {
-    if (element) {
+  private checkContainer(element: HTMLElement | undefined) {
+    const container = this.getSelectionRange()?.startContainer;
+    if (element && container) {
       if (element.textContent?.trim().length == 0) {
         while (container.firstChild) {
           container.firstChild.remove();
@@ -287,19 +329,13 @@ export class EditorService {
     return text.match(regex);
   }
 
-  private getInputElement(container: Node) {
-    return (
-      container.parentElement instanceof HTMLParagraphElement
-        ? container
-        : container.parentElement
-    ) as HTMLElement;
-  }
   private getLeftSiblingElement(element: HTMLElement) {
     const parentElement = element.parentElement ?? element;
     return parentElement.childNodes.item(
       Array.from(parentElement.childNodes).indexOf(element) - 1
     );
   }
+
   private getRightSiblingElement(element: HTMLElement) {
     const parentElement = element.parentElement ?? element;
     return parentElement.childNodes.item(
@@ -310,6 +346,7 @@ export class EditorService {
   private getIncludedPlaceholder(text: string): string | undefined {
     return this.placeholders.find(placeholder => text.includes(placeholder));
   }
+
   private getMatchingPlaceholder(text: string): string | undefined {
     return this.placeholders.find(placeholder => text === placeholder);
   }

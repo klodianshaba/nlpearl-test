@@ -28,6 +28,7 @@ export class FormComponent {
   ];
   initialSentence =
     'Hi, this is [Agent Name], I am  calling from [Company Name] , do you have a few minutes for to answer some questions?';
+
   constructor(private formBuilder: FormBuilder) {
     this.formGroup = this.formBuilder.group<FormGroupModel>({
       name: new FormControl('', Validators.required),
@@ -35,6 +36,7 @@ export class FormComponent {
       sentence: new FormControl(this.initialSentence, Validators.required),
     });
   }
+
   submit() {
     const formData: FormDataModel = {
       name: this.formGroup.value.name ?? null,

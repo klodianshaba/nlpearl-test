@@ -64,9 +64,13 @@ export class SentenceComponent implements ControlValueAccessor {
   }
 
   onKeydown(event: KeyboardEvent) {
+    console.log(event);
     switch (event.code) {
       case 'Space':
         this.editorService.handleSpace();
+        break;
+      case 'Enter':
+        this.editorService.handleEnter();
         break;
       default:
         break;
