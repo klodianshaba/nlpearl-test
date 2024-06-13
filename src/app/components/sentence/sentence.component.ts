@@ -80,7 +80,7 @@ export class SentenceComponent implements ControlValueAccessor {
       case 32:
         this.editorService.handleSpace();
         break;
-      case 13 | 10:
+      case 13:
         this.editorService.handleEnter();
         break;
       case 8:
