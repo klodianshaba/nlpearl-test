@@ -12,6 +12,7 @@ export class EditorService {
   openDelimiter = '[';
   closeDelimiter = ']';
   zeroWidthNonBreakingSpace = '\uFEFF';
+  zeroWidthSpace = '\u200B';
   renderer: Renderer2;
   placeholders: string[] = [];
 
@@ -36,9 +37,7 @@ export class EditorService {
       const cursorIndex = this.getCursorIndex(element);
       if (cursorIndex == element.innerText.trim().length) {
         // last character of placeholder
-        const textElement = this.createTextElement(
-          this.zeroWidthNonBreakingSpace + ' '
-        );
+        const textElement = this.createTextElement(this.zeroWidthSpace);
         element.after(textElement);
         this.setCursorAt(textElement, 1);
       }
@@ -51,11 +50,20 @@ export class EditorService {
       const cursorIndex = this.getCursorIndex(element);
       if (cursorIndex == 0) {
         // first character of placeholder
-        const textElement = this.createTextElement(
-          this.zeroWidthNonBreakingSpace + ' '
-        );
+        const textElement = this.createTextElement(this.zeroWidthSpace);
         element.before(textElement);
         this.setCursorAt(textElement, 1);
+      }
+    }
+  }
+
+  handleBackSpace() {
+    const element = this.isPlaceholderElement();
+    if (element) {
+      const cursorIndex = this.getCursorIndex(element);
+      if (cursorIndex == 1) {
+        element.innerText = this.zeroWidthSpace + element.innerText;
+        this.setCursorAt(element.firstChild, 2);
       }
     }
   }
@@ -114,7 +122,7 @@ export class EditorService {
     if (element) {
       const cloneElement = element.nativeElement.cloneNode(true) as HTMLElement;
       this.formatElements([cloneElement]);
-      return cloneElement.textContent ?? '';
+      return (cloneElement.textContent ?? '').trim().replace(/\s+/g, ' ');
     }
     return '';
   }

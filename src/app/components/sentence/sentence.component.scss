@@ -10,10 +10,10 @@
     max-height: 300px;
     border-radius: $border-radius $border-radius 0 0;
     padding: $padding;
-    line-height: 16px;
     outline: none;
+    line-height: 16px;
     .placeholder {
-      padding: 1.5px;
+      padding: 2px;
       border-radius: 4px;
       font-size: $font-size-small;
       background-color: var(--primary-color);
