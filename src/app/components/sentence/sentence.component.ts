@@ -74,14 +74,15 @@ export class SentenceComponent implements ControlValueAccessor {
    * @description Contenteditable keydown event handler
    * **/
   onKeydown(event: KeyboardEvent) {
-    switch (event.code) {
-      case 'Space':
+    const key = event.which || event.keyCode;
+    switch (key) {
+      case 32:
         this.editorService.handleSpace();
         break;
-      case 'Enter':
+      case 13:
         this.editorService.handleEnter();
         break;
-      case 'Backspace':
+      case 8:
         this.editorService.handleBackSpace();
         break;
       default:
