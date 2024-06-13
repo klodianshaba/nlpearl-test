@@ -81,7 +81,7 @@ export class EditorService {
     return document.createTextNode(text);
   }
 
-  insertAtCursor(savedRange: Range | null, placeholder: string) {
+  insertAtCursor(savedRange: Range | undefined, placeholder: string) {
     const selection = window.getSelection();
     if (savedRange && selection) {
       selection.removeAllRanges();
@@ -124,7 +124,7 @@ export class EditorService {
     if (selection && selection.rangeCount > 0) {
       return selection.getRangeAt(0);
     }
-    return null;
+    return undefined;
   }
 
   private handlePlaceholderInteraction(element: HTMLElement) {

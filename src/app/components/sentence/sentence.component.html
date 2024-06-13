@@ -4,15 +4,11 @@
     contenteditable="true"
     class="editable"
     [innerHTML]="html"
-    (focus)="saveSelection()"
-    (keyup)="saveSelection()"
-    (mouseup)="saveSelection()"
+    (focus)="onSelection()"
+    (keyup)="onSelection()"
+    (mouseup)="onSelection()"
     (input)="onInput($event)">
-    <p>
-      <span>
-        <span contenteditable="false" class="placeholder">Company Name</span>
-      </span>
-    </p>
+    <p></p>
   </div>
   <app-placeholders
     [placeholders]="placeholders()"

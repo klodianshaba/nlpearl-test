@@ -27,10 +27,11 @@ import { EditorService } from '../../services/editor.service';
 })
 export class SentenceComponent implements ControlValueAccessor {
   placeholders = input<string[]>([]);
-  editable = viewChild<ElementRef>('editable');
+  editable = viewChild<ElementRef<HTMLElement>>('editable');
   html: SafeHtml = '';
   private onChange: (value: string) => void = () => {};
-  private savedRange: Range | null = null;
+  private onTouched: (value: string) => void = () => {};
+  private savedRange: Range | undefined;
 
   constructor(
     private domSanitizer: DomSanitizer,
@@ -46,30 +47,34 @@ export class SentenceComponent implements ControlValueAccessor {
     );
   }
 
-  registerOnChange(fn: any) {
+  registerOnChange(fn: (value: string) => void) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any) {}
+  registerOnTouched(fn: (value: string) => void) {
+    this.onTouched = fn;
+  }
 
   onInput(event: Event) {
+    this.editorService.handleInteraction(
+      this.editable()?.nativeElement,
+      this.placeholders()
+    );
     this.updateSentence();
+  }
+
+  onSelection() {
+    this.savedRange = this.editorService.getSelectionRange();
   }
 
   onPlaceholder(placeholder: string) {
-    this.editorService.insertAtCursor(this.savedRange, placeholder);
-    this.updateSentence();
-  }
-
-  saveSelection() {
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      this.savedRange = selection.getRangeAt(0);
+    if (this.savedRange) {
+      this.editorService.insertAtCursor(this.savedRange, placeholder);
+      this.updateSentence();
     }
   }
 
   private updateSentence() {
-    const formatedText = this.editorService.convertToText(this.editable());
-    this.onChange(formatedText);
+    this.onChange(this.editorService.convertToText(this.editable()));
   }
 }
