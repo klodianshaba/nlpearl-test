@@ -88,7 +88,7 @@ export class EditorService {
     return result;
   }
 
-  canInsertPlaceholder(savedRange: Range) {
+  canInsertPlaceholderAtCursor(savedRange: Range) {
     const container = savedRange.startContainer;
     const element = this.getInputElement(container);
     if (element.nodeType == Node.ELEMENT_NODE) {
@@ -140,10 +140,13 @@ export class EditorService {
     return document.createTextNode(text);
   }
 
-  insertAtCursor(savedRange: Range | undefined, placeholder: string) {
+  insertPlaceholderAtCursor(
+    savedRange: Range | undefined,
+    placeholder: string
+  ) {
     const selection = window.getSelection();
     if (savedRange && selection) {
-      if (this.canInsertPlaceholder(savedRange)) {
+      if (this.canInsertPlaceholderAtCursor(savedRange)) {
         selection.removeAllRanges();
         selection.addRange(savedRange);
         const range = savedRange;
@@ -158,11 +161,24 @@ export class EditorService {
           placeholderElement.firstChild,
           placeholderElement.innerText.length
         );
+      } else {
+        const container = savedRange.startContainer;
+        const element = this.getInputElement(container);
+        this.insertPlaceholderAfter(element, placeholder);
       }
     }
   }
 
-  insertAtBottom(
+  insertPlaceholderAfter(element: HTMLElement, placeholder: string) {
+    const placeholderElement = this.createPlaceholderElement(placeholder);
+    element.after(placeholderElement);
+    this.setCursorAt(
+      placeholderElement.firstChild,
+      placeholderElement.innerText.length
+    );
+  }
+
+  insertPlaceholderAtBottom(
     editableElement: HTMLElement | undefined,
     placeholder: string
   ) {

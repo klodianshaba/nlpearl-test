@@ -85,10 +85,13 @@ export class SentenceComponent implements ControlValueAccessor {
 
   onPlaceholder(placeholder: string) {
     if (this.savedRange) {
-      this.editorService.insertAtCursor(this.savedRange, placeholder);
+      this.editorService.insertPlaceholderAtCursor(
+        this.savedRange,
+        placeholder
+      );
       this.updateSentence();
     } else
-      this.editorService.insertAtBottom(
+      this.editorService.insertPlaceholderAtBottom(
         this.editable()?.nativeElement,
         placeholder
       );
